@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>One-shot Stickman Fight</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="overlay" class="hidden">
+      <div id="menu">
+        <h1 id="menu-title">Stickman Fight</h1>
+        <p id="menu-desc">First to 5 wins. Restart to play again.</p>
+        <button id="restart">Restart Match</button>
+      </div>
+    </div>
+    <div id="scoreboard">
+      <div class="player" id="player1">
+        <div class="swatch" id="swatch1"></div>
+        <div class="info">
+          <div class="name">Player 1</div>
+          <div class="weapon" id="weapon1">Weapon: —</div>
+        </div>
+        <div class="points" id="points1">0</div>
+      </div>
+      <div class="player" id="player2">
+        <div class="swatch" id="swatch2"></div>
+        <div class="info">
+          <div class="name">Player 2</div>
+          <div class="weapon" id="weapon2">Weapon: —</div>
+        </div>
+        <div class="points" id="points2">0</div>
+      </div>
+      <div id="round">Round 1</div>
+    </div>
+
+    <div id="controls">
+      <div><strong>Left:</strong> A/D move, W jump, S attack</div>
+      <div><strong>Right:</strong> ←/→ move, ↑ jump, ↓ attack</div>
+      <div><strong>Drop:</strong> Hold attack or press Shift</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="sketch.js"></script>
+  </body>
+</html>

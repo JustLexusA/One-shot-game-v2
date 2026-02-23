@@ -1,0 +1,22 @@
+html,body{height:100%;margin:0;background:#111;color:#eee;font-family:Arial,Helvetica,sans-serif}
+#overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.hidden{display:none}
+#menu{background:rgba(0,0,0,0.85);padding:28px;border-radius:8px;border:2px solid #444;text-align:center}
+#menu h1{margin:0 0 6px 0;font-size:28px}
+#menu p{margin:0 0 16px}
+#restart{padding:8px 14px;font-size:16px;border-radius:6px;border:0;background:#28a745;color:white;cursor:pointer}
+#restart:hover{filter:brightness(1.1)}
+#scoreboard{position:absolute;left:12px;top:12px;font-weight:bold;display:flex;gap:12px;align-items:center}
+#scoreboard .player{background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:8px;display:flex;align-items:center;gap:8px;min-width:180px}
+#scoreboard .swatch{width:14px;height:30px;border-radius:3px;border:1px solid rgba(255,255,255,0.08)}
+#scoreboard .info{flex:1}
+#scoreboard .name{font-weight:700}
+#scoreboard .weapon{font-size:12px;color:#bbb}
+#scoreboard .points{font-size:20px;font-weight:900}
+#round{background:#222;padding:6px 10px;border-radius:8px;border:1px solid #333;color:#fff}
+#controls{position:absolute;right:12px;top:12px;text-align:right;font-size:12px;color:#aaa;max-width:260px}
+
+/* Menu tweaks */
+#menu{background:rgba(10,10,10,0.95);padding:28px;border-radius:8px;border:2px solid #444;text-align:center}
+#menu h1{margin:0 0 6px 0;font-size:32px}
+#menu p{margin:0 0 16px;color:#ccc}
