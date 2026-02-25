@@ -26,28 +26,24 @@ let respawnDelay = 1400;
 let respawning = false;
 
 function setup(){
-  const canvas = createCanvas(1000,600);
-  canvas.parent(document.body);
+  const cw = Math.min(1200, Math.floor(windowWidth * 0.9));
+  const ch = Math.min(720, Math.floor(windowHeight * 0.8));
+  const canvas = createCanvas(cw, ch);
+  canvas.parent('game');
   engine = Engine.create();
   world = engine.world;
   world.gravity.y = 1.0;
+  // create level (platforms, weapons)
+  createLevel();
 
-  // Platforms: middle large, two small side ones elevated
-  let mid = Bodies.rectangle(width/2, 360, 420, 24, {isStatic:true, label:'platform'});
-  let left = Bodies.rectangle(260, 310, 160, 20, {isStatic:true, label:'platform'});
-  let right = Bodies.rectangle(740, 310, 160, 20, {isStatic:true, label:'platform'});
-  World.add(world, [mid,left,right]);
-  platforms = [mid,left,right];
+  // add side walls so players don't fall off immediately
+  let leftWall = Bodies.rectangle(-40, height/2, 80, height*3, {isStatic:true, label:'wall'});
+  let rightWall = Bodies.rectangle(width+40, height/2, 80, height*3, {isStatic:true, label:'wall'});
+  World.add(world, [leftWall, rightWall]);
 
-  // Weapons - two sticks in the middle
-  let w1 = Bodies.rectangle(width/2 - 70, 300, 140, 10, {label:'weapon', friction:0.3, restitution:0.2});
-  let w2 = Bodies.rectangle(width/2 + 70, 300, 140, 10, {label:'weapon', friction:0.3, restitution:0.2});
-  World.add(world, [w1,w2]);
-  weapons = [w1,w2];
-
-  // Create two stickmen
-  players.push(new Stickman(1, 260, 250, color(0,200,255)));
-  players.push(new Stickman(2, 740, 250, color(255,100,100)));
+  // Create two stickmen (spawn positions scale with canvas)
+  players.push(new Stickman(1, Math.floor(width*0.22), Math.floor(height*0.42), color(0,200,255)));
+  players.push(new Stickman(2, Math.floor(width*0.78), Math.floor(height*0.42), color(255,100,100)));
 
   // setup simple sound synthesizers (p5.sound)
   try{
@@ -77,8 +73,8 @@ function draw(){
   Engine.update(engine, 1000/60);
 
   // draw platforms
-  noStroke(); fill(80); drawBody(platforms[0]);
-  drawBody(platforms[1]); drawBody(platforms[2]);
+  noStroke(); fill(80);
+  for(let plat of platforms){ if(plat) drawBody(plat); }
 
   // draw weapons
   for(let w of weapons) drawWeapon(w);
@@ -88,10 +84,12 @@ function draw(){
     p.update();
     p.draw();
   }
-
-  // check deaths (fall into void)
+  // check deaths (fall into void) - handle each death only once
   for(let i=0;i<players.length;i++){
-    if(players[i].isDead()){
+    if(players[i].isDead() && !players[i]._handled){
+      // mark handled and remove bodies
+      players[i].killBodies();
+      players[i]._handled = true;
       let other = players[1-i];
       scores[1-i]++;
       respawning = true;
@@ -103,7 +101,6 @@ function draw(){
         // short delay then respawn
         setTimeout(()=>{ respawnRound(1-i); respawning = false; }, 600);
       }
-      players[i].killBodies();
     }
   }
 
@@ -259,16 +256,77 @@ function keyReleased(){
 function respawnRound(winnerIndex){
   // cleanup weapons (drop)
   for(let w of weapons) detachWeapon(w);
-  // remove old players
+  // remove old players' bodies and constraints from world
+  for(let p of players){
+    try{
+      if(p.torso) World.remove(world, p.torso);
+      if(p.head) World.remove(world, p.head);
+      if(p.leftHand) World.remove(world, p.leftHand);
+      if(p.rightHand) World.remove(world, p.rightHand);
+      if(p.constraints) for(let c of p.constraints) World.remove(world, c);
+    }catch(e){}
+  }
   players = [];
-  players.push(new Stickman(1, 260, 250, color(0,200,255)));
-  players.push(new Stickman(2, 740, 250, color(255,100,100)));
+  // recreate level (randomized)
+  createLevel();
+  players.push(new Stickman(1, Math.floor(width*0.22), Math.floor(height*0.42), color(0,200,255)));
+  players.push(new Stickman(2, Math.floor(width*0.78), Math.floor(height*0.42), color(255,100,100)));
 }
 
 function resetMatch(){
   scores = [0,0];
   winner = null;
   respawnRound();
+}
+
+function createLevel(){
+  // remove old platforms and weapons
+  try{
+    for(let p of platforms) World.remove(world, p);
+    for(let w of weapons){ if(w._constraint) World.remove(world, w._constraint); World.remove(world, w); }
+  }catch(e){}
+  platforms = [];
+  weapons = [];
+
+  // main platforms (positions scaled to canvas)
+  let mid = Bodies.rectangle(width/2, Math.floor(height*0.62), Math.max(220, Math.floor(width*0.42)), 24, {isStatic:true, label:'platform'});
+  let left = Bodies.rectangle(Math.floor(width*0.22), Math.floor(height*0.52 + random(-30,30)), 160, 20, {isStatic:true, label:'platform'});
+  let right = Bodies.rectangle(Math.floor(width*0.78), Math.floor(height*0.52 + random(-30,30)), 160, 20, {isStatic:true, label:'platform'});
+  World.add(world, [mid,left,right]);
+  platforms = [mid,left,right];
+
+  // mini platforms below for easier survival
+  // more mini platforms below for easier survival
+  for(let i=0;i<6;i++){
+    let px = Math.floor(width*(0.08 + 0.84*Math.random()));
+    let py = Math.floor(height*(0.68 + 0.05*(i%3)));
+    let w = 60 + Math.floor(80*Math.random());
+    let mini = Bodies.rectangle(px, py, w, 12, {isStatic:true, label:'platform'});
+    World.add(world, mini);
+    platforms.push(mini);
+  }
+
+  // floating platforms above main stage for vertical movement
+  for(let i=0;i<4;i++){
+    let fx = Math.floor(width*(0.2 + 0.6*Math.random()));
+    let fy = Math.floor(height*(0.36 + 0.08*i));
+    let fw = 90 + Math.floor(120*Math.random());
+    let floatPlat = Bodies.rectangle(fx, fy, fw, 12, {isStatic:true, label:'platform'});
+    World.add(world, floatPlat);
+    platforms.push(floatPlat);
+  }
+
+  // side small platforms near edges
+  let sideL = Bodies.rectangle(Math.floor(width*0.06), Math.floor(height*0.5), 90, 12, {isStatic:true, label:'platform'});
+  let sideR = Bodies.rectangle(Math.floor(width*0.94), Math.floor(height*0.5), 90, 12, {isStatic:true, label:'platform'});
+  World.add(world, [sideL, sideR]);
+  platforms.push(sideL, sideR);
+
+  // weapons near center
+  let w1 = Bodies.rectangle(width/2 - 70, Math.floor(height*0.54), 140, 10, {label:'weapon', friction:0.3, restitution:0.2});
+  let w2 = Bodies.rectangle(width/2 + 70, Math.floor(height*0.54), 140, 10, {label:'weapon', friction:0.3, restitution:0.2});
+  World.add(world, [w1,w2]);
+  weapons = [w1,w2];
 }
 
 function showMenu(text){
@@ -341,18 +399,18 @@ class Stickman{
   }
 
   handleInput(){
-    // apply horizontal forces
-    let forceMag = 0.0055;
+    // apply horizontal forces (tuned lower for smoother movement)
+    let forceMag = 0.0032;
     if(this.isLeft){
       if(keyIsDown(65)){ Body.applyForce(this.torso, this.torso.position, {x:-forceMag, y:0}); } // A
       if(keyIsDown(68)){ Body.applyForce(this.torso, this.torso.position, {x:forceMag, y:0}); } // D
-      if(keyIsDown(87)){ // W jump
-        if(abs(this.torso.velocity.y) < 2.5){ Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.16}); }
+      if(keyIsDown(87)){ // W jump (lower)
+        if(abs(this.torso.velocity.y) < 2.5){ Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.08}); }
       }
     } else {
       if(keyIsDown(37)){ Body.applyForce(this.torso, this.torso.position, {x:-forceMag, y:0}); } // left
       if(keyIsDown(39)){ Body.applyForce(this.torso, this.torso.position, {x:forceMag, y:0}); } // right
-      if(keyIsDown(38)){ if(abs(this.torso.velocity.y) < 2.5) Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.16}); }
+      if(keyIsDown(38)){ if(abs(this.torso.velocity.y) < 2.5) Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.08}); }
     }
   }
 
@@ -378,10 +436,10 @@ class Stickman{
     if(held){
       // swing: apply force to weapon to create angular velocity and recoil
       let facing = this.facing || (this.isLeft?1:-1);
-      let swingForce = 0.16;
-      Body.applyForce(held, held.position, {x: facing * swingForce, y: -0.02});
-      try{ Body.setAngularVelocity(held, facing * 6); } catch(e){}
-      Body.applyForce(this.torso, this.torso.position, {x: -facing*0.02, y:-0.01});
+      let swingForce = 0.11;
+      Body.applyForce(held, held.position, {x: facing * swingForce, y: -0.015});
+      try{ Body.setAngularVelocity(held, facing * 4); } catch(e){}
+      Body.applyForce(this.torso, this.torso.position, {x: -facing*0.015, y:-0.008});
       playSwingSound();
     } else {
       // try to pick up nearest weapon within range of either hand
@@ -410,8 +468,8 @@ class Stickman{
 
   killBodies(){
     this.dead = true;
-    // remove parts from world (they will still fall but mark dead)
-    // keep bodies but mark dead to avoid double scoring
+    playDeathSound();
+    // keep bodies in world so physics play out, but mark as dead to avoid double scoring
   }
 
   playerName(){ return this.isLeft ? 'Player 1' : 'Player 2'; }
