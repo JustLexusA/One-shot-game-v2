@@ -22,7 +22,7 @@ let overlay;
 let jumpOsc, swingOsc, hitOsc, pickupOsc, deathOsc;
 
 let respawnTimer = 0;
-let respawnDelay = 1400;
+let respawnDelay = 2000;
 let respawning = false;
 
 function setup(){
@@ -37,8 +37,8 @@ function setup(){
   createLevel();
 
   // add side walls so players don't fall off immediately
-  let leftWall = Bodies.rectangle(-40, height/2, 80, height*3, {isStatic:true, label:'wall'});
-  let rightWall = Bodies.rectangle(width+40, height/2, 80, height*3, {isStatic:true, label:'wall'});
+  let leftWall = Bodies.rectangle(-40, height/2, 80, height*3, {isStatic:true, label:'wall', color:'red'});
+  let rightWall = Bodies.rectangle(width+40, height/2, 80, height*3, {isStatic:true, label:'wall', color:'red'});
   World.add(world, [leftWall, rightWall]);
 
   // Create two stickmen (spawn positions scale with canvas)
@@ -46,15 +46,15 @@ function setup(){
   players.push(new Stickman(2, Math.floor(width*0.78), Math.floor(height*0.42), color(255,100,100)));
 
   // setup simple sound synthesizers (p5.sound)
-  try{
-    jumpOsc = new p5.Oscillator('triangle'); jumpOsc.start(); jumpOsc.amp(0);
-    swingOsc = new p5.Oscillator('square'); swingOsc.start(); swingOsc.amp(0);
-    hitOsc = new p5.Oscillator('sawtooth'); hitOsc.start(); hitOsc.amp(0);
-    pickupOsc = new p5.Oscillator('sine'); pickupOsc.start(); pickupOsc.amp(0);
-    deathOsc = new p5.Oscillator('sine'); deathOsc.start(); deathOsc.amp(0);
-  }catch(e){
-    // p5.sound not available
-  }
+  // try{
+  //   jumpOsc = new p5.Oscillator('triangle'); jumpOsc.start(); jumpOsc.amp(0);
+  //   swingOsc = new p5.Oscillator('square'); swingOsc.start(); swingOsc.amp(0);
+  //   hitOsc = new p5.Oscillator('sawtooth'); hitOsc.start(); hitOsc.amp(0);
+  //   pickupOsc = new p5.Oscillator('sine'); pickupOsc.start(); pickupOsc.amp(0);
+  //   deathOsc = new p5.Oscillator('sine'); deathOsc.start(); deathOsc.amp(0);
+  // }catch(e){
+  //   // p5.sound not available
+  // }
 
   // collision handling for weapon hits
   Events.on(engine,'collisionStart', function(e){
@@ -297,7 +297,7 @@ function createLevel(){
 
   // mini platforms below for easier survival
   // more mini platforms below for easier survival
-  for(let i=0;i<6;i++){
+  for(let i=0;i<3;i++){
     let px = Math.floor(width*(0.08 + 0.84*Math.random()));
     let py = Math.floor(height*(0.68 + 0.05*(i%3)));
     let w = 60 + Math.floor(80*Math.random());
