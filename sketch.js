@@ -99,7 +99,7 @@ function draw(){
         showMenu(`${other.playerName()} wins!`);
       } else {
         // short delay then respawn
-        setTimeout(()=>{ respawnRound(1-i); respawning = false; }, 600);
+        setTimeout(()=>{ respawnRound(1-i); respawning = false; }, 1400);
       }
     }
   }
