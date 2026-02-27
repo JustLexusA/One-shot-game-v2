@@ -52,3 +52,5 @@ function setup(){
     hitOsc = new p5.Oscillator('sawtooth'); hitOsc.start(); hitOsc.amp(0);
     pickupOsc = new p5.Oscillator('sine'); pickupOsc.start(); pickupOsc.amp(0);
     deathOsc = new p5.Oscillator('sine'); deathOsc.start(); deathOsc.amp(0);
+  }
+}
