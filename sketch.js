@@ -169,7 +169,7 @@ function drawWeapon(w){
   rotate(w.angle);
   rectMode(CENTER);
   fill(180,120,60);
-  rect(0,0, 140, 10);
+  rect(0,0, 100, 5);
   pop();
 }
 
@@ -297,9 +297,9 @@ function createLevel(){
 
   // mini platforms below for easier survival
   // more mini platforms below for easier survival
-  for(let i=0;i<3;i++){
+  for(let i=0;i<4;i++){
     let px = Math.floor(width*(0.08 + 0.84*Math.random()));
-    let py = Math.floor(height*(0.68 + 0.05*(i%3)));
+    let py = Math.floor(height*(0.78 + 0.05*(i%3)));
     let w = 60 + Math.floor(80*Math.random());
     let mini = Bodies.rectangle(px, py, w, 12, {isStatic:true, label:'platform'});
     World.add(world, mini);
@@ -309,7 +309,7 @@ function createLevel(){
   // floating platforms above main stage for vertical movement
   for(let i=0;i<4;i++){
     let fx = Math.floor(width*(0.2 + 0.6*Math.random()));
-    let fy = Math.floor(height*(0.36 + 0.08*i));
+    let fy = Math.floor(height*(0.2 + 0.08*i));
     let fw = 90 + Math.floor(120*Math.random());
     let floatPlat = Bodies.rectangle(fx, fy, fw, 12, {isStatic:true, label:'platform'});
     World.add(world, floatPlat);
@@ -323,8 +323,8 @@ function createLevel(){
   platforms.push(sideL, sideR);
 
   // weapons near center
-  let w1 = Bodies.rectangle(width/2 - 70, Math.floor(height*0.54), 140, 10, {label:'weapon', friction:0.3, restitution:0.2});
-  let w2 = Bodies.rectangle(width/2 + 70, Math.floor(height*0.54), 140, 10, {label:'weapon', friction:0.3, restitution:0.2});
+  let w1 = Bodies.rectangle(width/2 - 70, Math.floor(height*0.54), 100, 5, {label:'weapon', friction:0.3, restitution:0.2});
+  let w2 = Bodies.rectangle(width/2 + 70, Math.floor(height*0.54), 100, 5, {label:'weapon', friction:0.3, restitution:0.2});
   World.add(world, [w1,w2]);
   weapons = [w1,w2];
 }
