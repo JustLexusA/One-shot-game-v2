@@ -405,12 +405,12 @@ class Stickman{
       if(keyIsDown(65)){ Body.applyForce(this.torso, this.torso.position, {x:-forceMag, y:0}); } // A
       if(keyIsDown(68)){ Body.applyForce(this.torso, this.torso.position, {x:forceMag, y:0}); } // D
       if(keyIsDown(87)){ // W jump (lower)
-        if(abs(this.torso.velocity.y) < 2.5){ Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.08}); }
+        if(abs(this.torso.velocity.y) < 2.5){ Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.02}); }
       }
     } else {
       if(keyIsDown(37)){ Body.applyForce(this.torso, this.torso.position, {x:-forceMag, y:0}); } // left
       if(keyIsDown(39)){ Body.applyForce(this.torso, this.torso.position, {x:forceMag, y:0}); } // right
-      if(keyIsDown(38)){ if(abs(this.torso.velocity.y) < 2.5) Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.08}); }
+      if(keyIsDown(38)){ if(abs(this.torso.velocity.y) < 2.5) Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.02}); }
     }
   }
 
