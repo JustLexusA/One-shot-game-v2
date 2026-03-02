@@ -300,7 +300,7 @@ function createLevel(){
   for(let i=0;i<4;i++){
     let px = Math.floor(width*(0.08 + 0.84*Math.random()));
     let py = Math.floor(height*(0.78 + 0.05*(i%3)));
-    let w = 60 + Math.floor(80*Math.random());
+    let w = 60 + Math.floor(80);
     let mini = Bodies.rectangle(px, py, w, 12, {isStatic:true, label:'platform'});
     World.add(world, mini);
     platforms.push(mini);
@@ -309,8 +309,8 @@ function createLevel(){
   // floating platforms above main stage for vertical movement
   for(let i=0;i<4;i++){
     let fx = Math.floor(width*(0.2 + 0.6*Math.random()));
-    let fy = Math.floor(height*(0.2 + 0.08*i));
-    let fw = 90 + Math.floor(120*Math.random());
+    let fy = Math.floor(height*(0.1 + 0.08*i));
+    let fw = 90 + Math.floor(75);
     let floatPlat = Bodies.rectangle(fx, fy, fw, 12, {isStatic:true, label:'platform'});
     World.add(world, floatPlat);
     platforms.push(floatPlat);
