@@ -26,8 +26,8 @@ let respawnDelay = 2000;
 let respawning = false;
 
 function setup(){
-  const cw = Math.min(1200, Math.floor(windowWidth * 0.9));
-  const ch = Math.min(720, Math.floor(windowHeight * 0.8));
+  const cw = Math.min(2000, Math.floor(windowWidth * 0.8));
+  const ch = Math.min(1000, Math.floor(windowHeight * 0.8));
   const canvas = createCanvas(cw, ch);
   canvas.parent('game');
   engine = Engine.create();
@@ -182,7 +182,7 @@ function handleCollision(a,b){
   }
   // weapon pickup: if a hand collides with weapon, attach
   if(a.label==='hand' && b.label==='weapon') attachWeaponToHand(a,b);
-  if(b.label==='hand' && a.label==='weapon') attachWeaponToHand(b,a);
+  else if(b.label==='hand' && a.label==='weapon') attachWeaponToHand(b,a);
 }
 
 function applyKnockback(targetBody, weaponBody){
@@ -405,12 +405,12 @@ class Stickman{
       if(keyIsDown(65)){ Body.applyForce(this.torso, this.torso.position, {x:-forceMag, y:0}); } // A
       if(keyIsDown(68)){ Body.applyForce(this.torso, this.torso.position, {x:forceMag, y:0}); } // D
       if(keyIsDown(87)){ // W jump (lower)
-        if(abs(this.torso.velocity.y) < 2.5){ Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.02}); }
+        if(abs(this.torso.velocity.y) < 0.5){ Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.035}); }
       }
     } else {
       if(keyIsDown(37)){ Body.applyForce(this.torso, this.torso.position, {x:-forceMag, y:0}); } // left
       if(keyIsDown(39)){ Body.applyForce(this.torso, this.torso.position, {x:forceMag, y:0}); } // right
-      if(keyIsDown(38)){ if(abs(this.torso.velocity.y) < 2.5) Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.02}); }
+      if(keyIsDown(38)){ if(abs(this.torso.velocity.y) < 0.5) Body.applyForce(this.torso, this.torso.position, {x:0, y:-0.035}); }
     }
   }
 
